@@ -7,8 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
-import pl.mswierczewski.socialwall.components.user.SocialWallUser;
-import pl.mswierczewski.socialwall.components.user.SocialWallUserService;
+import pl.mswierczewski.socialwall.components.models.SocialWallUser;
+import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 
 import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;

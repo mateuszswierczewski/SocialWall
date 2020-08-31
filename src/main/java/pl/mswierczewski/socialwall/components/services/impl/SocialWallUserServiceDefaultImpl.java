@@ -1,8 +1,11 @@
-package pl.mswierczewski.socialwall.components.user;
+package pl.mswierczewski.socialwall.components.services.impl;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pl.mswierczewski.socialwall.components.models.SocialWallUser;
+import pl.mswierczewski.socialwall.components.repositories.SocialWallUserRepository;
+import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
 
 

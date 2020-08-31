@@ -52,4 +52,14 @@ public class AuthController {
                 .status(HttpStatus.OK)
                 .body("Signed out successfully!");
     }
+
+    @GetMapping("/activateAccount/{token}")
+    public ResponseEntity<String> activateAccount(@PathVariable String token){
+        System.out.println("tut");
+        authService.activateAccount(token);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body("Account activated!");
+    }
 }

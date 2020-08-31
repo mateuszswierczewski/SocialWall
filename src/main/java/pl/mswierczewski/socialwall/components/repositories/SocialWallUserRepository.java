@@ -1,7 +1,8 @@
-package pl.mswierczewski.socialwall.components.user;
+package pl.mswierczewski.socialwall.components.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 
 import java.util.Optional;
 import java.util.UUID;

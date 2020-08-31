@@ -1,9 +1,10 @@
-package pl.mswierczewski.socialwall.components.user;
+package pl.mswierczewski.socialwall.components.models;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -45,19 +46,19 @@ public class SocialWallUser implements UserDetails, Serializable {
     private final Set<SocialWallUserRole> roles = new HashSet<>();
 
 
-    @Transient
-    private final boolean isAccountNonExpired = true;
-    @Transient
-    private final boolean isAccountNonLocked = true;
-    @Transient
-    private final boolean isCredentialsNonExpired = true;
-    @Transient
-    private final boolean isEnabled = true;
+    private boolean isAccountNonExpired;
+
+    private boolean isAccountNonLocked;
+
+    private boolean isCredentialsNonExpired;
+
+    private boolean isEnabled;
 
     public SocialWallUser(String username, String password, String email, SocialWallUserRole role) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.isEnabled = false;
         addRole(role);
     }
 
@@ -96,22 +97,29 @@ public class SocialWallUser implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+        //return isAccountNonExpired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
+        //return isAccountNonLocked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isCredentialsNonExpired;
+        //return isCredentialsNonExpired;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
     }
 
     @Override

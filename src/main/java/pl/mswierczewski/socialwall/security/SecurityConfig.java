@@ -15,7 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pl.mswierczewski.socialwall.security.filters.JwtAuthorizationFilter;
-import pl.mswierczewski.socialwall.components.user.SocialWallUserService;
+import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/api/auth/signUp", "/api/auth/signIn").permitAll()
+                    .antMatchers("/api/auth/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

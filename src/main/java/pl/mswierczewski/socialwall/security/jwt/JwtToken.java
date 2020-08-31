@@ -8,7 +8,7 @@ import java.util.Date;
 @Table(
         name = "tokens",
         indexes = {@Index(name = "userIdIndex", columnList = "userId"),
-                   @Index(name = "tokenExpiringDateIndex", columnList = "tokenExpiringDate")
+                   @Index(name = "expiryDateIndex", columnList = "expiryDate")
         })
 public class JwtToken implements Serializable {
 
@@ -20,14 +20,14 @@ public class JwtToken implements Serializable {
     private String userId;
 
     @Column(nullable = false)
-    private Date tokenExpiringDate;
+    private Date expiryDate;
 
     private boolean isValid;
 
-    public JwtToken(String token, String userId, Date tokenExpiringDate) {
+    public JwtToken(String token, String userId, Date expiryDate) {
         this.token = token;
         this.userId = userId;
-        this.tokenExpiringDate = tokenExpiringDate;
+        this.expiryDate = expiryDate;
         this.isValid = true;
     }
 
@@ -44,7 +44,7 @@ public class JwtToken implements Serializable {
     }
 
     public boolean isTokenExpired(){
-        return tokenExpiringDate.after(new Date());
+        return expiryDate.after(new Date());
     }
 
     public boolean isValid(){

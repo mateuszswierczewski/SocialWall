@@ -11,15 +11,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.mswierczewski.socialwall.components.models.VerificationToken;
+import pl.mswierczewski.socialwall.components.services.VerificationTokenService;
 import pl.mswierczewski.socialwall.dtos.SignInRequest;
 import pl.mswierczewski.socialwall.dtos.SignOutRequest;
 import pl.mswierczewski.socialwall.dtos.SignUpRequest;
 import pl.mswierczewski.socialwall.exceptions.SocialWallBadCredentialsException;
 import pl.mswierczewski.socialwall.exceptions.UserAlreadyExistException;
 import pl.mswierczewski.socialwall.security.jwt.JwtTokenService;
-import pl.mswierczewski.socialwall.components.user.SocialWallUser;
-import pl.mswierczewski.socialwall.components.user.SocialWallUserRole;
-import pl.mswierczewski.socialwall.components.user.SocialWallUserService;
+import pl.mswierczewski.socialwall.components.models.SocialWallUser;
+import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
+import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
+import pl.mswierczewski.socialwall.tools.mail.MailService;
+
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -31,13 +35,19 @@ public class AuthService {
 
     private final SocialWallUserService userService;
     private final JwtTokenService jwtTokenService;
+    private final VerificationTokenService verificationTokenService;
+    private final MailService mailService;
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthService(SocialWallUserService socialWallUserService, JwtTokenService jwtTokenService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public AuthService(SocialWallUserService socialWallUserService, JwtTokenService jwtTokenService,
+                       VerificationTokenService verificationTokenService, MailService mailService,
+                       AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.userService = socialWallUserService;
         this.jwtTokenService = jwtTokenService;
+        this.verificationTokenService = verificationTokenService;
+        this.mailService = mailService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
@@ -64,6 +74,10 @@ public class AuthService {
         );
 
         user = userService.save(user);
+
+        VerificationToken verificationToken = verificationTokenService.generateVerificationToken(user);
+
+        mailService.sendVerificationEmail(user, verificationToken);
 
         logger.trace(String.format("User %s sign up! User ID: %s", user.getUsername(), user.getId()));
     }
@@ -110,5 +124,16 @@ public class AuthService {
     public SocialWallUser getCurrentUser(){
         String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.getUserById(userId);
+    }
+
+    @Transactional
+    public void activateAccount(String token) {
+        SocialWallUser user = verificationTokenService.getUserByVerificationTokenId(token);
+        user.setEnabled(true);
+        userService.save(user);
+
+        verificationTokenService.remove(token);
+
+        logger.trace(String.format("User %s (%s) verified account successfully!", user.getUsername(), user.getId()));
     }
 }

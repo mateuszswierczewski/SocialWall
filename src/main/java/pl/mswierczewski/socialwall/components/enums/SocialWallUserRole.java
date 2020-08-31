@@ -1,4 +1,4 @@
-package pl.mswierczewski.socialwall.components.user;
+package pl.mswierczewski.socialwall.components.enums;
 
 public enum SocialWallUserRole {
 
