@@ -52,6 +52,6 @@ public class VerificationToken implements Serializable {
     }
 
     public boolean isExpired() {
-        return expiryDate.after(new Date());
+        return expiryDate.before(new Date());
     }
 }

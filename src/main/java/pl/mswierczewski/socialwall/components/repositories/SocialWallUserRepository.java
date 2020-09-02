@@ -5,10 +5,9 @@ import org.springframework.stereotype.Repository;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface SocialWallUserRepository extends JpaRepository<SocialWallUser, UUID> {
+public interface SocialWallUserRepository extends JpaRepository<SocialWallUser, String> {
 
     Optional<SocialWallUser> findByUsername(String username);
 

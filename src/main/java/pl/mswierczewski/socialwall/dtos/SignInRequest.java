@@ -15,11 +15,6 @@ public class SignInRequest {
     @NotEmpty
     private String password;
 
-    public SignInRequest(String usernameOrEmail, String password) {
-        this.username = usernameOrEmail;
-        this.password = password;
-    }
-
     public String getUsername() {
         return username;
     }

@@ -45,13 +45,19 @@ public class SocialWallUser implements UserDetails, Serializable {
     @Enumerated(EnumType.STRING)
     private final Set<SocialWallUserRole> roles = new HashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private SocialWallUserProfile userProfile;
 
+    @Column
     private boolean isAccountNonExpired;
 
+    @Column
     private boolean isAccountNonLocked;
 
+    @Column
     private boolean isCredentialsNonExpired;
 
+    @Column
     private boolean isEnabled;
 
     public SocialWallUser(String username, String password, String email, SocialWallUserRole role) {
@@ -97,20 +103,17 @@ public class SocialWallUser implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonExpired() {
-        //return isAccountNonExpired;
-        return true;
+        return isAccountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        //return isAccountNonLocked;
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        //return isCredentialsNonExpired;
-        return true;
+        return isCredentialsNonExpired;
     }
 
     @Override
@@ -118,9 +121,40 @@ public class SocialWallUser implements UserDetails, Serializable {
         return isEnabled;
     }
 
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setUserProfile(SocialWallUserProfile userProfile) {
+        this.userProfile = userProfile;
+    }
+
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
     }
+
+
 
     @Override
     public String toString() {

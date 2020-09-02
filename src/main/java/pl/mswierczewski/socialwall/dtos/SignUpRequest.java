@@ -1,29 +1,37 @@
 package pl.mswierczewski.socialwall.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import pl.mswierczewski.socialwall.components.enums.Gender;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
+import java.time.LocalDate;
 
 public class SignUpRequest {
 
-    @NotNull
     @NotEmpty
     private String username;
 
-    @NotNull
     @NotEmpty
     private String password;
 
-    @NotNull
-    @NotNull
+    @NotEmpty
     @Email(message = "Email address is not valid!")
     private String email;
 
-    public SignUpRequest(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-    }
+    @NotEmpty
+    private String firstName;
+
+    @NotEmpty
+    private String lastName;
+
+    @Past
+    private LocalDate birthDate;
+
+    @NotNull
+    private Gender gender;
 
     public String getUsername() {
         return username;
@@ -47,5 +55,37 @@ public class SignUpRequest {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 }

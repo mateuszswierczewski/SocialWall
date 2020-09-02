@@ -1,18 +1,22 @@
 package pl.mswierczewski.socialwall.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class SignOutRequest {
 
-    private boolean signOutOnAllDevices;
+    @JsonProperty
+    private boolean onAllDevices;
 
-    public SignOutRequest(boolean signOutOnAllDevices) {
-        this.signOutOnAllDevices = signOutOnAllDevices;
+    public boolean isOnAllDevices() {
+        return onAllDevices;
     }
 
-    public boolean isSignOutOnAllDevices() {
-        return signOutOnAllDevices;
+    public void setOnAllDevices(boolean onAllDevices) {
+        this.onAllDevices = onAllDevices;
     }
 
-    public void setSignOutOnAllDevices(boolean signOutOnAllDevices) {
-        this.signOutOnAllDevices = signOutOnAllDevices;
+    public boolean getOnAllDevices() {
+        return onAllDevices;
     }
+
 }

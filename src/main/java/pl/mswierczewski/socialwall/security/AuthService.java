@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.models.VerificationToken;
 import pl.mswierczewski.socialwall.components.services.VerificationTokenService;
 import pl.mswierczewski.socialwall.dtos.SignInRequest;
@@ -18,9 +19,9 @@ import pl.mswierczewski.socialwall.dtos.SignOutRequest;
 import pl.mswierczewski.socialwall.dtos.SignUpRequest;
 import pl.mswierczewski.socialwall.exceptions.SocialWallBadCredentialsException;
 import pl.mswierczewski.socialwall.exceptions.UserAlreadyExistException;
+import pl.mswierczewski.socialwall.mappers.UserMapper;
 import pl.mswierczewski.socialwall.security.jwt.JwtTokenService;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
-import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 import pl.mswierczewski.socialwall.tools.mail.MailService;
 
@@ -38,18 +39,18 @@ public class AuthService {
     private final VerificationTokenService verificationTokenService;
     private final MailService mailService;
 
-    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     public AuthService(SocialWallUserService socialWallUserService, JwtTokenService jwtTokenService,
                        VerificationTokenService verificationTokenService, MailService mailService,
-                       AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userService = socialWallUserService;
         this.jwtTokenService = jwtTokenService;
         this.verificationTokenService = verificationTokenService;
         this.mailService = mailService;
-        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
     }
 
     @Transactional
@@ -66,12 +67,7 @@ public class AuthService {
             throw new UserAlreadyExistException(isUsernameExists, isEmailExists);
         }
 
-        SocialWallUser user = new SocialWallUser(
-                request.getUsername(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getEmail(),
-                SocialWallUserRole.DEFAULT_USER
-        );
+        SocialWallUser user = UserMapper.MAPPER.mapSignUpRequestToUser(request, SocialWallUserRole.DEFAULT_USER, passwordEncoder);
 
         user = userService.save(user);
 
@@ -110,7 +106,7 @@ public class AuthService {
                 token -> {
                     String userId = jwtTokenService.getClaims(token).getSubject();
 
-                    if (request.isSignOutOnAllDevices()) {
+                    if (request.isOnAllDevices()) {
                         jwtTokenService.invalidateAllUserTokens(userId);
                         logger.trace(String.format("User %s sign out from all devices!", userId));
                     } else {

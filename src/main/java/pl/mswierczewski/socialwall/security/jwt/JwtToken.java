@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Entity
 @Table(
-        name = "tokens",
+        name = "jwt_tokens",
         indexes = {@Index(name = "userIdIndex", columnList = "userId"),
                    @Index(name = "expiryDateIndex", columnList = "expiryDate")
         })
@@ -16,7 +16,7 @@ public class JwtToken implements Serializable {
     @Column(length = 600)
     private String token;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String userId;
 
     @Column(nullable = false)

@@ -45,7 +45,7 @@ public class AuthController {
     }
 
     @PostMapping("/signOut")
-    public ResponseEntity<String> signOut(@Valid @RequestBody SignOutRequest request, HttpServletRequest httpRequest){
+    public ResponseEntity<String> signOut(@RequestBody SignOutRequest request, HttpServletRequest httpRequest){
         authService.signOut(request, httpRequest);
 
         return ResponseEntity

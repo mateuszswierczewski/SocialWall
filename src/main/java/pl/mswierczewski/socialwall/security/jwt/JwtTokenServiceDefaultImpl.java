@@ -56,7 +56,7 @@ public class JwtTokenServiceDefaultImpl implements JwtTokenService {
 
         JwtToken jwtToken = new JwtToken(
                 token,
-                authentication.getName(),
+                user.getId(),
                 expirationDate
         );
 
