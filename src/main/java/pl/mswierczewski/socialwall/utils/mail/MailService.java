@@ -1,4 +1,4 @@
-package pl.mswierczewski.socialwall.tools.mail;
+package pl.mswierczewski.socialwall.utils.mail;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

@@ -12,11 +12,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class VerificationTokenServiceDefaultImpl implements VerificationTokenService {
+public class DefaultVerificationTokenService implements VerificationTokenService {
 
     private final VerificationTokenRepository verificationTokenRepository;
 
-    public VerificationTokenServiceDefaultImpl(VerificationTokenRepository verificationTokenRepository) {
+    public DefaultVerificationTokenService(VerificationTokenRepository verificationTokenRepository) {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 

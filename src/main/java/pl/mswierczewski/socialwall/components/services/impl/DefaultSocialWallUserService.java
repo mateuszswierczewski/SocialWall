@@ -11,11 +11,11 @@ import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
 
 
 @Service
-public class SocialWallUserServiceDefaultImpl implements SocialWallUserService {
+public class DefaultSocialWallUserService implements SocialWallUserService {
 
     private final SocialWallUserRepository userRepository;
 
-    public SocialWallUserServiceDefaultImpl(SocialWallUserRepository userRepository) {
+    public DefaultSocialWallUserService(SocialWallUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

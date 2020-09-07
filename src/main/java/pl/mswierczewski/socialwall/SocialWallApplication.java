@@ -1,12 +1,14 @@
 package pl.mswierczewski.socialwall;
 
-import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
+import pl.mswierczewski.socialwall.configs.SwaggerConfig;
 
 @SpringBootApplication
 @EnableAsync
+@Import(SwaggerConfig.class)
 public class SocialWallApplication {
 
 	public static void main(String[] args) {

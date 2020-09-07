@@ -23,7 +23,7 @@ import pl.mswierczewski.socialwall.mappers.UserMapper;
 import pl.mswierczewski.socialwall.security.jwt.JwtTokenService;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
-import pl.mswierczewski.socialwall.tools.mail.MailService;
+import pl.mswierczewski.socialwall.utils.mail.MailService;
 
 
 import javax.servlet.http.HttpServletRequest;

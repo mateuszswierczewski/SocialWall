@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 import static pl.mswierczewski.socialwall.security.jwt.JwtConfig.*;
 
 @Service
-public class JwtTokenServiceDefaultImpl implements JwtTokenService {
+public class DefaultJwtTokenService implements JwtTokenService {
 
     private final JwtTokenRepository jwtTokenRepository;
     private final SocialWallUserService userService;
     private final SecretKey secretKey;
 
-    public JwtTokenServiceDefaultImpl(JwtTokenRepository jwtTokenRepository, SocialWallUserService userService, SecretKey secretKey) {
+    public DefaultJwtTokenService(JwtTokenRepository jwtTokenRepository, SocialWallUserService userService, SecretKey secretKey) {
         this.jwtTokenRepository = jwtTokenRepository;
         this.userService = userService;
         this.secretKey = secretKey;
