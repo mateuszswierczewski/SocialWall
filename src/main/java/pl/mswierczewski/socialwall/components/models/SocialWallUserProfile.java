@@ -1,6 +1,5 @@
 package pl.mswierczewski.socialwall.components.models;
 
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 import pl.mswierczewski.socialwall.components.enums.Gender;
@@ -8,6 +7,7 @@ import pl.mswierczewski.socialwall.components.enums.Gender;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Objects;
 import java.util.Optional;
 
 @Entity
@@ -65,6 +65,14 @@ public class SocialWallUserProfile {
 
     public SocialWallUserProfile(){
 
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setUser(SocialWallUser user) {
+        this.user = user;
     }
 
     public String getId() {
@@ -139,5 +147,25 @@ public class SocialWallUserProfile {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SocialWallUserProfile)) return false;
+        SocialWallUserProfile that = (SocialWallUserProfile) o;
+        return getId().equals(that.getId()) &&
+                getFirstName().equals(that.getFirstName()) &&
+                getLastName().equals(that.getLastName()) &&
+                getBirthDate().equals(that.getBirthDate()) &&
+                getGender() == that.getGender() &&
+                Objects.equals(getCity(), that.getCity()) &&
+                Objects.equals(getCountry(), that.getCountry()) &&
+                Objects.equals(getDescription(), that.getDescription()) &&
+                Objects.equals(getProfileImageLink(), that.getProfileImageLink()) &&
+                Objects.equals(user, that.user);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getFirstName(), getLastName(), getBirthDate(), getGender(), getCity(), getCountry(), getDescription(), getProfileImageLink(), user);
+    }
 }

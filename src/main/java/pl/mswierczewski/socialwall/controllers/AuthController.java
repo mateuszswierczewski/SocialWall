@@ -10,8 +10,6 @@ import pl.mswierczewski.socialwall.security.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.List;
 
 import static pl.mswierczewski.socialwall.security.jwt.JwtConfig.AUTHORIZATION_HEADER;
 import static pl.mswierczewski.socialwall.security.jwt.JwtConfig.AUTHORIZATION_PREFIX;

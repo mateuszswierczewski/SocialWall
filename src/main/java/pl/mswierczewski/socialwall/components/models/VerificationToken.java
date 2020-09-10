@@ -3,7 +3,6 @@ package pl.mswierczewski.socialwall.components.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Entity
 @Table(name = "verification_tokens")
@@ -16,15 +15,9 @@ public class VerificationToken implements Serializable {
     @JoinColumn(name = "user_id")
     private SocialWallUser user;
 
-    private Date expiryDate;
+    private LocalDate expiryDate;
 
     public VerificationToken() {
-    }
-
-    @PrePersist
-    private void prePersist(){
-        if (expiryDate == null)
-            expiryDate = java.sql.Date.valueOf(LocalDate.now().plusDays(3));
     }
 
     public String getToken() {
@@ -43,15 +36,19 @@ public class VerificationToken implements Serializable {
         this.user = user;
     }
 
-    public Date getExpiryDate() {
+    public LocalDate getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(Date expiryDate) {
+    public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
     }
 
+    public void setTokenExpirationLengthInDays(Integer days) {
+        this.expiryDate = LocalDate.now().plusDays(days);
+    }
+
     public boolean isExpired() {
-        return expiryDate.before(new Date());
+        return expiryDate.isBefore(LocalDate.now());
     }
 }

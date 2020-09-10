@@ -21,6 +21,10 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+/**
+ * This class authenticates every single request, which requires authentication.
+ * Authentication is based on JWT validation.
+ */
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -32,13 +36,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         this.jsonUtils = jsonUtils;
     }
 
+    /**
+     * Filters requests.
+     *
+     * @param request - HttpServletRequest
+     * @param response - HttpServletResponse
+     * @param filterChain - FilterChain
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+            // Extracts token from request
             Optional<String> tokenOptional = jwtTokenService.getTokenFromRequest(request);
 
+            // If token is present, then validates it
             tokenOptional.ifPresent(
                     token -> {
                         Authentication authentication = jwtTokenService.validateToken(token, request);
@@ -46,6 +59,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     }
             );
 
+            // Continue request
             filterChain.doFilter(request, response);
 
         } catch (JwtException | SocialWallUserNotFoundException e) {

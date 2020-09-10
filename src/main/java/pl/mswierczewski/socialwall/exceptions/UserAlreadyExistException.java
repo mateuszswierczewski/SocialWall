@@ -27,7 +27,7 @@ public class UserAlreadyExistException extends RuntimeException{
             msg += "\nUsername is already taken!";
         }
         if (emailExist) {
-            msg += "\nEmail is already taken";
+            msg += "\nEmail is already taken!";
         }
         return msg;
     }

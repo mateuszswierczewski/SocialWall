@@ -7,17 +7,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(
         name = "users",
-        indexes = {@Index(name = "usernameIndex", columnList = "username", unique = true),
-                   @Index(name = "emailIndex", columnList = "email", unique = true)
+        indexes = {
+                @Index(name = "usernameIndex", columnList = "username", unique = true),
+                @Index(name = "emailIndex", columnList = "email", unique = true)
         })
 public class SocialWallUser implements UserDetails, Serializable {
 
@@ -27,25 +30,27 @@ public class SocialWallUser implements UserDetails, Serializable {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String id;
 
-    @Column(unique = true, length = 30, nullable = false)
+    @Size(min = 2, max = 30)
+    @Column(nullable = false, unique = true, length = 30)
     private String username;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true, length = 50, nullable = false)
+    @Column(nullable = false, unique = true, length = 50)
     private String email;
 
     @ElementCollection(targetClass = SocialWallUserRole.class, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", nullable = false))
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private final Set<SocialWallUserRole> roles = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_profile_id", nullable = false, unique = true)
     private SocialWallUserProfile userProfile;
 
     @Column
@@ -65,6 +70,9 @@ public class SocialWallUser implements UserDetails, Serializable {
         this.password = password;
         this.email = email;
         this.isEnabled = false;
+        this.isAccountNonExpired = true;
+        this.isAccountNonLocked = true;
+        this.isCredentialsNonExpired = true;
         addRole(role);
     }
 
@@ -81,6 +89,10 @@ public class SocialWallUser implements UserDetails, Serializable {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toSet());
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getId() {
@@ -154,7 +166,31 @@ public class SocialWallUser implements UserDetails, Serializable {
         isEnabled = enabled;
     }
 
+    public SocialWallUserProfile getUserProfile() {
+        return userProfile;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SocialWallUser)) return false;
+        SocialWallUser user = (SocialWallUser) o;
+        return isAccountNonExpired() == user.isAccountNonExpired() &&
+                isAccountNonLocked() == user.isAccountNonLocked() &&
+                isCredentialsNonExpired() == user.isCredentialsNonExpired() &&
+                isEnabled() == user.isEnabled() &&
+                getId().equals(user.getId()) &&
+                getUsername().equals(user.getUsername()) &&
+                getPassword().equals(user.getPassword()) &&
+                getEmail().equals(user.getEmail()) &&
+                roles.equals(user.roles) &&
+                getUserProfile().equals(user.getUserProfile());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), roles, getUserProfile(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled());
+    }
 
     @Override
     public String toString() {

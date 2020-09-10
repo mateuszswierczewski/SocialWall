@@ -17,6 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import pl.mswierczewski.socialwall.security.filters.JwtAuthorizationFilter;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 
+/**
+ * Security configuration
+ */
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

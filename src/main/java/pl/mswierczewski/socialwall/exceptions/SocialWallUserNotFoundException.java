@@ -6,4 +6,8 @@ public class SocialWallUserNotFoundException extends RuntimeException {
         super(String.format("User %s not found!", userId));
     }
 
+    public SocialWallUserNotFoundException(){
+        super("User not found!");
+    }
+
 }

@@ -1,6 +1,5 @@
 package pl.mswierczewski.socialwall.dtos;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import pl.mswierczewski.socialwall.components.enums.Gender;
 
 import javax.validation.constraints.Email;
@@ -32,6 +31,23 @@ public class SignUpRequest {
 
     @NotNull
     private Gender gender;
+
+    public SignUpRequest(String username, String password,
+                         String email, String firstName,
+                         String lastName, LocalDate birthDate,
+                         Gender gender) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+    }
+
+    public SignUpRequest(){
+
+    }
 
     public String getUsername() {
         return username;

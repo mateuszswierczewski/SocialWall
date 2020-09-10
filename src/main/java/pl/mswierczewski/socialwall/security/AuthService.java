@@ -2,6 +2,7 @@ package pl.mswierczewski.socialwall.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +30,9 @@ import pl.mswierczewski.socialwall.utils.mail.MailService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
+/**
+ * Class which handles the requests related to user registration, authorization, authentication
+ */
 @Service
 public class AuthService {
 
@@ -39,22 +43,33 @@ public class AuthService {
     private final VerificationTokenService verificationTokenService;
     private final MailService mailService;
 
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    @Autowired
     public AuthService(SocialWallUserService socialWallUserService, JwtTokenService jwtTokenService,
                        VerificationTokenService verificationTokenService, MailService mailService,
-                       PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+                       UserMapper userMapper, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.userService = socialWallUserService;
         this.jwtTokenService = jwtTokenService;
         this.verificationTokenService = verificationTokenService;
         this.mailService = mailService;
+        this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Registers users in the system. Checks if request has unique username and email.
+     * After save, sends email with verification link to given email in request.
+     *
+     * @param request SignUpRequest
+     * @throws UserAlreadyExistException when username or email already exists
+     */
     @Transactional
     public void signUp(SignUpRequest request) {
+        // Checks if username and email are unique
         boolean isUsernameExists = userService.existsByUsername(request.getUsername());
         boolean isEmailExists = userService.existsByEmail(request.getEmail());
 
@@ -67,19 +82,29 @@ public class AuthService {
             throw new UserAlreadyExistException(isUsernameExists, isEmailExists);
         }
 
-        SocialWallUser user = UserMapper.MAPPER.mapSignUpRequestToUser(request, SocialWallUserRole.DEFAULT_USER, passwordEncoder);
+        // Maps request to user and encodes password
+        SocialWallUser user = userMapper.mapSignUpRequestToUser(request, SocialWallUserRole.DEFAULT_USER, passwordEncoder);
 
+        // Saves user
         user = userService.save(user);
 
+        // Generates verification token and sends it via email
         VerificationToken verificationToken = verificationTokenService.generateVerificationToken(user);
-
         mailService.sendVerificationEmail(user, verificationToken);
 
         logger.trace(String.format("User %s sign up! User ID: %s", user.getUsername(), user.getId()));
     }
 
+    /**
+     * Validates user login request. Generates and returns user JWT token.
+     *
+     * @param request SignInRequest
+     * @param httpRequest HttpServletRequest
+     * @return A string of generated token
+     */
     public String signIn(SignInRequest request, HttpServletRequest httpRequest) {
         try {
+            // Authenticates request
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getUsername(),
@@ -87,8 +112,9 @@ public class AuthService {
                     )
             );
 
+            // Generates JWT
             String token = jwtTokenService.generateJwtToken(authentication, httpRequest);
-            logger.trace(String.format("User %s sign in! User token: %s", request.getUsername(), token));
+            logger.trace(String.format("User %s sign in! User token: %s", ((SocialWallUser) authentication.getPrincipal()).getId(), token));
 
             return token;
 
@@ -99,17 +125,29 @@ public class AuthService {
         }
     }
 
+    /**
+     * Invalidates the token provides in HttpServletRequest object, or also invalidates the rest of tokens belongs to user
+     * according to SignOutRequest
+     *
+     * @param request SignOutRequest
+     * @param httpRequest HttpServletRequest
+     */
     public void signOut(SignOutRequest request, HttpServletRequest httpRequest) {
+        // Extract token from http request
         Optional<String> tokenOptional = jwtTokenService.getTokenFromRequest(httpRequest);
 
+        // Invalidates token or tokens
         tokenOptional.ifPresent(
                 token -> {
                     String userId = jwtTokenService.getClaims(token).getSubject();
 
                     if (request.isOnAllDevices()) {
+                        // If logout on all devices is requested
+                        // This is equivalent to invalidating all tokens belonging to the user
                         jwtTokenService.invalidateAllUserTokens(userId);
                         logger.trace(String.format("User %s sign out from all devices!", userId));
                     } else {
+                        // If it is requested to logout only on the device from which the request comes
                         jwtTokenService.invalidateToken(token);
                         logger.trace(String.format("User %s sign out!", userId));
                     }
@@ -117,17 +155,30 @@ public class AuthService {
         );
     }
 
+    /**
+     * Returns object of current user who executes request.
+     *
+     * @return A SocialWallUser who executes request
+     */
     public SocialWallUser getCurrentUser(){
+        // Retrieves a user id from context
         String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.getUserById(userId);
     }
 
+    /**
+     * Activates user account by given verification token.
+     *
+     * @param token a String of verification token
+     */
     @Transactional
     public void activateAccount(String token) {
+        // Gets user from database verification token and enable user account
         SocialWallUser user = verificationTokenService.getUserByVerificationTokenId(token);
         user.setEnabled(true);
         userService.save(user);
 
+        // Removes token from database
         verificationTokenService.remove(token);
 
         logger.trace(String.format("User %s (%s) verified account successfully!", user.getUsername(), user.getId()));

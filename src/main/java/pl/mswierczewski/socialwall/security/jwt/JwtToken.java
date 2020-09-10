@@ -23,13 +23,13 @@ public class JwtToken implements Serializable {
     @Column(nullable = false)
     private Date expiryDate;
 
-    private boolean isValid;
+    private boolean isForbidden;
 
     public JwtToken(String token, String userId, Date expiryDate) {
         this.token = token;
         this.userId = userId;
         this.expiryDate = expiryDate;
-        this.isValid = true;
+        this.isForbidden = false;
     }
 
     public JwtToken() {
@@ -48,12 +48,12 @@ public class JwtToken implements Serializable {
         return expiryDate.after(new Date());
     }
 
-    public boolean isValid(){
-        return isValid;
+    public boolean isForbidden(){
+        return isForbidden;
     }
 
     public void invalidate(){
-        this.isValid = false;
+        this.isForbidden = true;
     }
 
 }
