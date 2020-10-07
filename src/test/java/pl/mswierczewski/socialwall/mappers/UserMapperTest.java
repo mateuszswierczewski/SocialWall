@@ -10,7 +10,7 @@ import pl.mswierczewski.socialwall.components.enums.Gender;
 import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.models.SocialWallUserProfile;
-import pl.mswierczewski.socialwall.dtos.SignUpRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
 
 import java.time.LocalDate;
 

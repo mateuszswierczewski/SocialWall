@@ -166,6 +166,6 @@ public class SocialWallUserProfile {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getFirstName(), getLastName(), getBirthDate(), getGender(), getCity(), getCountry(), getDescription(), getProfileImageLink(), user);
+        return Objects.hash(getId(), getFirstName(), getLastName(), getBirthDate(), getGender(), getCity(), getCountry(), getDescription(), getProfileImageLink());
     }
 }

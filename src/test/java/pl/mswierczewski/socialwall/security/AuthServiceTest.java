@@ -1,5 +1,6 @@
 package pl.mswierczewski.socialwall.security;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,8 +17,8 @@ import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.models.VerificationToken;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 import pl.mswierczewski.socialwall.components.services.VerificationTokenService;
-import pl.mswierczewski.socialwall.dtos.SignInRequest;
-import pl.mswierczewski.socialwall.dtos.SignUpRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignInRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
 import pl.mswierczewski.socialwall.exceptions.UserAlreadyExistException;
 import pl.mswierczewski.socialwall.mappers.UserMapper;
 import pl.mswierczewski.socialwall.security.jwt.JwtTokenService;
@@ -32,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
 
@@ -164,7 +164,9 @@ class AuthServiceTest {
         SignInRequest request = new SignInRequest("user", "pass");
 
         // ... successful authentication
-        Authentication authentication = new UsernamePasswordAuthenticationToken("user", "pass");
+        SocialWallUser user = new SocialWallUser("user", "pass", "email@email.com", null);
+        user.setId("test");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user,null);
         given(authenticationManager.authenticate(any())).willReturn(authentication);
 
         // ... fake jwt token
@@ -172,11 +174,7 @@ class AuthServiceTest {
 
         // Then
         assertDoesNotThrow(() -> underTest.signIn(request, null));
-
     }
-
-    //TODO: write the rest sign in and sign out tests
-
 
     @Test
     void itShouldActivateAccount() {

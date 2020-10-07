@@ -8,7 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.models.SocialWallUserProfile;
-import pl.mswierczewski.socialwall.dtos.SignUpRequest;
+import pl.mswierczewski.socialwall.dtos.user.UserBasicInfo;
+import pl.mswierczewski.socialwall.dtos.user.UserInfo;
+import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -32,9 +34,27 @@ public interface UserMapper {
     @Mapping(target = "profileImageLink", ignore = true)
     SocialWallUserProfile mapSignUpRequestToUserProfile(SignUpRequest request);
 
+    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "firstName", expression = "java(user.getUserProfile().getFirstName())")
+    @Mapping(target = "lastName", expression = "java(user.getUserProfile().getLastName())")
+    @Mapping(target = "gender", expression = "java(user.getUserProfile().getGender())")
+    @Mapping(target = "description", expression = "java(user.getUserProfile().getDescription().orElse(null))")
+    @Mapping(target = "country", expression = "java(user.getUserProfile().getCountry().orElse(null))")
+    @Mapping(target = "city", expression = "java(user.getUserProfile().getCity().orElse(null))")
+    @Mapping(target = "birthDate", expression = "java(user.getUserProfile().getBirthDate())")
+    @Mapping(target = "numberOfFollowers", expression = "java(user.getFollowers().size())")
+    @Mapping(target = "numberOfFollowing", expression = "java(user.getFollowing().size())")
+    UserInfo mapUserToUserInfo(SocialWallUser user);
+
+    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "firstName", expression = "java(user.getUserProfile().getFirstName())")
+    @Mapping(target = "lastName", expression = "java(user.getUserProfile().getLastName())")
+    UserBasicInfo mapUserToBasicUserInfo(SocialWallUser user);
+
     @AfterMapping
-    default void afterMapSignUpRequestToUser(SocialWallUserRole role, @MappingTarget SocialWallUser user){
+    default void afterMapSignUpRequestToUser(SocialWallUserRole role, @MappingTarget SocialWallUser user) {
         user.addRole(role);
     }
+
 
 }

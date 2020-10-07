@@ -3,9 +3,11 @@ package pl.mswierczewski.socialwall.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.mswierczewski.socialwall.dtos.SignInRequest;
-import pl.mswierczewski.socialwall.dtos.SignOutRequest;
-import pl.mswierczewski.socialwall.dtos.SignUpRequest;
+import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
+import pl.mswierczewski.socialwall.dtos.TextResponse;
+import pl.mswierczewski.socialwall.dtos.auth.SignInRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignOutRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
 import pl.mswierczewski.socialwall.security.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,27 +21,29 @@ import static pl.mswierczewski.socialwall.security.jwt.JwtConfig.AUTHORIZATION_P
 public class AuthController {
 
     private final AuthService authService;
+    private final SocialWallUserService userService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, SocialWallUserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<String> signUp(@Valid @RequestBody SignUpRequest request){
+    public ResponseEntity<TextResponse> signUp(@Valid @RequestBody SignUpRequest request){
         authService.signUp(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body("User Registration Successful");
+                .body(new TextResponse("User Registration Successful"));
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<String> signIn(@Valid @RequestBody SignInRequest request, HttpServletRequest httpRequest){
+    public ResponseEntity<TextResponse> signIn(@Valid @RequestBody SignInRequest request, HttpServletRequest httpRequest){
         String token = authService.signIn(request, httpRequest);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .header(AUTHORIZATION_HEADER, AUTHORIZATION_PREFIX + token)
-                .body("Authorization successful");
+                .body(new TextResponse("Authorization successful"));
     }
 
     @PostMapping("/signOut")
@@ -53,11 +57,19 @@ public class AuthController {
 
     @GetMapping("/activateAccount/{token}")
     public ResponseEntity<String> activateAccount(@PathVariable String token){
-        System.out.println("tut");
         authService.activateAccount(token);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body("Account activated!");
+    }
+
+    @GetMapping("/existsByUsername/{username}")
+    public ResponseEntity<TextResponse> existsByUsername(@PathVariable("username") String username){
+        boolean result = userService.existsByUsername(username);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new TextResponse(Boolean.toString(result)));
     }
 }

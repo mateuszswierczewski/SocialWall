@@ -1,4 +1,4 @@
-package pl.mswierczewski.socialwall.dtos;
+package pl.mswierczewski.socialwall.dtos.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

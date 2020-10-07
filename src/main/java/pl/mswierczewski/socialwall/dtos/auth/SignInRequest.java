@@ -1,4 +1,4 @@
-package pl.mswierczewski.socialwall.dtos;
+package pl.mswierczewski.socialwall.dtos.auth;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

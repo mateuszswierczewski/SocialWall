@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.models.VerificationToken;
 import pl.mswierczewski.socialwall.components.services.VerificationTokenService;
-import pl.mswierczewski.socialwall.dtos.SignInRequest;
-import pl.mswierczewski.socialwall.dtos.SignOutRequest;
-import pl.mswierczewski.socialwall.dtos.SignUpRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignInRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignOutRequest;
+import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
 import pl.mswierczewski.socialwall.exceptions.SocialWallBadCredentialsException;
 import pl.mswierczewski.socialwall.exceptions.UserAlreadyExistException;
 import pl.mswierczewski.socialwall.mappers.UserMapper;
@@ -161,9 +161,12 @@ public class AuthService {
      * @return A SocialWallUser who executes request
      */
     public SocialWallUser getCurrentUser(){
+        return userService.getUserById(getCurrentUserId());
+    }
+
+    public static String getCurrentUserId(){
         // Retrieves a user id from context
-        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userService.getUserById(userId);
+        return (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     /**

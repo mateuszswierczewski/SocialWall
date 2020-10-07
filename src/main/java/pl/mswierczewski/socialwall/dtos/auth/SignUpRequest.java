@@ -1,4 +1,4 @@
-package pl.mswierczewski.socialwall.dtos;
+package pl.mswierczewski.socialwall.dtos.auth;
 
 import pl.mswierczewski.socialwall.components.enums.Gender;
 

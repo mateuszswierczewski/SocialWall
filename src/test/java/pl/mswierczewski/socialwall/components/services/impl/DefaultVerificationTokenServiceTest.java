@@ -11,6 +11,7 @@ import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.models.VerificationToken;
 import pl.mswierczewski.socialwall.components.repositories.VerificationTokenRepository;
 import pl.mswierczewski.socialwall.exceptions.ExpiredVerificationTokenException;
+import pl.mswierczewski.socialwall.exceptions.NotFoundException;
 import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
 
 import java.time.LocalDate;
@@ -89,8 +90,8 @@ class DefaultVerificationTokenServiceTest {
 
         // Then should throw exception
         assertThatThrownBy(() -> underTest.getUserByVerificationTokenId(token))
-                .isInstanceOf(SocialWallUserNotFoundException.class)
-                .hasMessageContaining("User not found!");
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining(String.format("Token %s not found!", token));
     }
 
     @Test

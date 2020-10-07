@@ -1,6 +1,8 @@
 package pl.mswierczewski.socialwall.components.models;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,6 +54,19 @@ public class SocialWallUser implements UserDetails, Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_profile_id", nullable = false, unique = true)
     private SocialWallUserProfile userProfile;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "followers",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_user_id")
+    )
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    private final Set<SocialWallUser> following = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "following")
+    @LazyCollection(LazyCollectionOption.EXTRA)
+    private final Set<SocialWallUser> followers = new HashSet<>();
 
     @Column
     private boolean isAccountNonExpired;
@@ -170,6 +185,18 @@ public class SocialWallUser implements UserDetails, Serializable {
         return userProfile;
     }
 
+    public Set<SocialWallUser> getFollowing() {
+        return following;
+    }
+
+    public void addFollowing(SocialWallUser following) {
+        this.following.add(following);
+    }
+
+    public Set<SocialWallUser> getFollowers() {
+        return followers;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -189,7 +216,7 @@ public class SocialWallUser implements UserDetails, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), roles, getUserProfile(), isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled());
+        return Objects.hash(getId(), getUsername(), getPassword(), getEmail(), roles, isAccountNonExpired(), isAccountNonLocked(), isCredentialsNonExpired(), isEnabled());
     }
 
     @Override
