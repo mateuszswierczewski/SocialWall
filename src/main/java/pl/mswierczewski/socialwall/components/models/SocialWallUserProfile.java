@@ -20,7 +20,7 @@ public class SocialWallUserProfile {
             name = "UUID",
             strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String id;
 
     @Column(nullable = false, length = 50)
@@ -39,10 +39,10 @@ public class SocialWallUserProfile {
 
     //optionals fields
 
-    @Column(length = 40)
+    @Column(length = 50)
     private String city;
 
-    @Column(length = 40)
+    @Column(length = 50)
     private String country;
 
     @Column

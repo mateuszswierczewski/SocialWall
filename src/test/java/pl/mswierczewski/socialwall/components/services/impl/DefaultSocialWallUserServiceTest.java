@@ -6,12 +6,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.multipart.MultipartFile;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.repositories.SocialWallUserProfileRepository;
 import pl.mswierczewski.socialwall.components.repositories.SocialWallUserRepository;
 import pl.mswierczewski.socialwall.dtos.user.UserInfo;
-import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
+import pl.mswierczewski.socialwall.exceptions.api.SocialWallUserNotFoundException;
 import pl.mswierczewski.socialwall.mappers.UserMapper;
 import pl.mswierczewski.socialwall.utils.storage.FileStorage;
 
@@ -21,7 +20,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 
 class DefaultSocialWallUserServiceTest {

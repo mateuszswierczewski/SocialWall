@@ -12,7 +12,6 @@ import pl.mswierczewski.socialwall.components.models.VerificationToken;
 import pl.mswierczewski.socialwall.components.repositories.VerificationTokenRepository;
 import pl.mswierczewski.socialwall.exceptions.ExpiredVerificationTokenException;
 import pl.mswierczewski.socialwall.exceptions.NotFoundException;
-import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
 
 import java.time.LocalDate;
 import java.util.Optional;

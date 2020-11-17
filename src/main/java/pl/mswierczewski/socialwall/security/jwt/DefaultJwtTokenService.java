@@ -7,7 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
+import pl.mswierczewski.socialwall.exceptions.api.SocialWallUserNotFoundException;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 

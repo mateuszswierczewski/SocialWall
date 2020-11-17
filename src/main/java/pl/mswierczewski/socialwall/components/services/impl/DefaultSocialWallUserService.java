@@ -1,7 +1,5 @@
 package pl.mswierczewski.socialwall.components.services.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -17,9 +15,8 @@ import pl.mswierczewski.socialwall.dtos.user.UserInfo;
 import pl.mswierczewski.socialwall.exceptions.FileDownloadException;
 import pl.mswierczewski.socialwall.exceptions.FileUploadException;
 import pl.mswierczewski.socialwall.exceptions.NotFoundException;
-import pl.mswierczewski.socialwall.exceptions.SocialWallUserNotFoundException;
+import pl.mswierczewski.socialwall.exceptions.api.SocialWallUserNotFoundException;
 import pl.mswierczewski.socialwall.mappers.UserMapper;
-import pl.mswierczewski.socialwall.security.AuthService;
 import pl.mswierczewski.socialwall.utils.storage.FileBuckets;
 import pl.mswierczewski.socialwall.utils.storage.FileStorage;
 

@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import pl.mswierczewski.socialwall.exceptions.*;
+import pl.mswierczewski.socialwall.exceptions.api.ApiException;
+import pl.mswierczewski.socialwall.exceptions.api.SocialWallUserNotFoundException;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -55,15 +57,6 @@ public class ApiExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(value = {SocialWallUserNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleSocialWallUserNotFoundException(SocialWallUserNotFoundException e) {
-        ErrorResponse response = getResponse(e.getMessage(), HttpStatus.NOT_FOUND);
-
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(response);
-    }
-
     @ExceptionHandler(value = {FileUploadException.class})
     public ResponseEntity<ErrorResponse> handleFileUploadExceptionException(FileUploadException e) {
         ErrorResponse response = getResponse(e.getMessage(), e.getHttpStatus());
@@ -84,6 +77,21 @@ public class ApiExceptionHandler {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+
+    @ExceptionHandler(value = {ApiException.class})
+    public ResponseEntity<ApiErrorResponse> handleApiResponse(ApiException e){
+        ApiErrorResponse response = new ApiErrorResponse(e.getClass().getName(), e.getMessage(), e.getStatus());
+
+        if (e.getCause() != null){
+            ErrorCause errorCause = new ErrorCause(e.getClass().getName(), e.getMessage());
+            response.setCause(errorCause);
+        }
+
+        return ResponseEntity
+                .status(e.getStatus())
                 .body(response);
     }
 
