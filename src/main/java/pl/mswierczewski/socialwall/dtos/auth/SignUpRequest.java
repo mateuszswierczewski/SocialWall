@@ -2,15 +2,13 @@ package pl.mswierczewski.socialwall.dtos.auth;
 
 import pl.mswierczewski.socialwall.components.enums.Gender;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 public class SignUpRequest {
 
     @NotEmpty
+    @Size(max = 30)
     private String username;
 
     @NotEmpty
@@ -18,12 +16,15 @@ public class SignUpRequest {
 
     @NotEmpty
     @Email(message = "Email address is not valid!")
+    @Size(max = 50)
     private String email;
 
     @NotEmpty
+    @Size(max = 50)
     private String firstName;
 
     @NotEmpty
+    @Size(max = 50)
     private String lastName;
 
     @Past

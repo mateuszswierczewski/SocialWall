@@ -1,5 +1,6 @@
 package pl.mswierczewski.socialwall.controllers;
 
+import com.amazonaws.services.xray.model.Http;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,17 @@ public class PostController {
                                                            @RequestParam(defaultValue = "1") int page,
                                                            @RequestParam(defaultValue = "10") int pageSize) {
         List<PostResponse> response = postService.getUserPosts(userId, page, pageSize);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+    }
+
+    @GetMapping("/forUser")
+    public ResponseEntity<List<PostResponse>> getPostRecommendedForUser(Principal principal,
+                                                             @RequestParam(defaultValue = "1") int page,
+                                                             @RequestParam(defaultValue = "25") int pageSize) {
+        List<PostResponse> response = postService.getPostRecommendedForUser(principal.getName(), page, pageSize);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

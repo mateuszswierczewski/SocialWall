@@ -2,6 +2,7 @@ package pl.mswierczewski.socialwall.dtos.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import pl.mswierczewski.socialwall.components.enums.PostType;
+import pl.mswierczewski.socialwall.dtos.user.UserBasicInfo;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -11,12 +12,13 @@ public class PostResponse {
 
     // Obligatory fields
     private String postId;
-    private String authorId;
     private PostType postType;
     private int numberOfComments;
     private int numberOfLikes;
     private int numberOfDislikes;
     private ZonedDateTime createdDateTime;
+
+    private UserBasicInfo userBasicInfo;
 
     // At least one field of them must be non null
     private String textContent;
@@ -28,14 +30,6 @@ public class PostResponse {
 
     public void setPostId(String postId) {
         this.postId = postId;
-    }
-
-    public String getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(String authorId) {
-        this.authorId = authorId;
     }
 
     public PostType getPostType() {
@@ -92,5 +86,17 @@ public class PostResponse {
 
     public void setImagesLinks(List<String> imagesLinks) {
         this.imagesLinks = imagesLinks;
+    }
+
+    public UserBasicInfo getUserBasicInfo() {
+        return userBasicInfo;
+    }
+
+    public void setUserBasicInfo(UserBasicInfo userBasicInfo) {
+        this.userBasicInfo = userBasicInfo;
+    }
+
+    public List<String> getImagesLinks() {
+        return imagesLinks;
     }
 }

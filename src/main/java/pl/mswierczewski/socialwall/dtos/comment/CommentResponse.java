@@ -6,6 +6,9 @@ public class CommentResponse {
 
     private String id;
     private String userId;
+    private String firstName;
+    private String lastName;
+    private String username;
     private String textContent;
     private ZonedDateTime createdDateTime;
     private int numberOfLikes;
@@ -57,5 +60,29 @@ public class CommentResponse {
 
     public void setNumberOfDislikes(int numberOfDislikes) {
         this.numberOfDislikes = numberOfDislikes;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

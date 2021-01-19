@@ -3,6 +3,7 @@ package pl.mswierczewski.socialwall.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 import pl.mswierczewski.socialwall.components.enums.VoteType;
 import pl.mswierczewski.socialwall.components.models.Post;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
@@ -12,8 +13,9 @@ import pl.mswierczewski.socialwall.dtos.post.PostResponse;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface PostMapper {
+
 
     @Mapping(target = "votes", ignore = true)
     @Mapping(target = "textContent", expression = "java(request.getTextContent().orElse(null))")
@@ -25,11 +27,11 @@ public interface PostMapper {
     @Mapping(target = "author", source = "user")
     Post mapPostRequestToPost(SocialWallUser user, PostRequest request);
 
+    @Mapping(target = "userBasicInfo", source = "author")
     @Mapping(target = "postId", source = "id")
     @Mapping(target = "numberOfLikes", source = "votes", qualifiedByName = "likes")
     @Mapping(target = "numberOfDislikes", source = "votes", qualifiedByName = "dislikes")
     @Mapping(target = "numberOfComments", expression = "java(post.getComments().size())")
-    @Mapping(target = "authorId", source = "author.id")
     @Mapping(target = "textContent", expression = "java(post.getTextContent().orElse(null))")
     @Mapping(target = "imagesLinks", expression = "java(post.getImagesLinks().orElse(null))")
     PostResponse mapPostToPostResponse(Post post);

@@ -1,5 +1,8 @@
 package pl.mswierczewski.socialwall.dtos.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfo {
 
     // Obligatory fields
@@ -7,6 +10,9 @@ public class UserBasicInfo {
     private String username;
     private String firstName;
     private String lastName;
+
+    // Nullable fields
+    private boolean isFollowedByUser;
 
     public String getUserId() {
         return userId;
@@ -38,5 +44,13 @@ public class UserBasicInfo {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public boolean isFollowedByUser() {
+        return isFollowedByUser;
+    }
+
+    public void setFollowedByUser(boolean followedByUser) {
+        isFollowedByUser = followedByUser;
     }
 }

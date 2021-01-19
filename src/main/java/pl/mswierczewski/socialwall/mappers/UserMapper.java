@@ -8,9 +8,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.mswierczewski.socialwall.components.enums.SocialWallUserRole;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.components.models.SocialWallUserProfile;
+import pl.mswierczewski.socialwall.dtos.user.EditUserProfileRequest;
 import pl.mswierczewski.socialwall.dtos.user.UserBasicInfo;
 import pl.mswierczewski.socialwall.dtos.user.UserInfo;
 import pl.mswierczewski.socialwall.dtos.auth.SignUpRequest;
+
+import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -46,14 +50,28 @@ public interface UserMapper {
     @Mapping(target = "numberOfFollowing", expression = "java(user.getFollowing().size())")
     UserInfo mapUserToUserInfo(SocialWallUser user);
 
-    @Mapping(target = "userId", source = "id")
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "username", source = "user.username")
     @Mapping(target = "firstName", expression = "java(user.getUserProfile().getFirstName())")
     @Mapping(target = "lastName", expression = "java(user.getUserProfile().getLastName())")
+    @Mapping(target = "followedByUser", ignore = true)
     UserBasicInfo mapUserToBasicUserInfo(SocialWallUser user);
+
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "username", source = "user.username")
+    @Mapping(target = "firstName", expression = "java(user.getUserProfile().getFirstName())")
+    @Mapping(target = "lastName", expression = "java(user.getUserProfile().getLastName())")
+    @Mapping(target = "followedByUser", expression = "java(isFollowedByUser(principalId, user.getFollowers()))")
+    UserBasicInfo mapUserToBasicUserInfo(String principalId, SocialWallUser user);
 
     @AfterMapping
     default void afterMapSignUpRequestToUser(SocialWallUserRole role, @MappingTarget SocialWallUser user) {
         user.addRole(role);
+    }
+
+    default boolean isFollowedByUser(String userId, Set<SocialWallUser> followers) {
+        return followers.stream()
+                .anyMatch( user -> user.getId().equals(userId));
     }
 
 

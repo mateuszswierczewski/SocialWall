@@ -7,8 +7,12 @@ import org.springframework.stereotype.Repository;
 import pl.mswierczewski.socialwall.components.models.Post;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 
+import java.util.Collection;
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, String> {
 
     Page<Post> findAllByAuthor(SocialWallUser author, Pageable pageable);
+
+    Page<Post> findAllByAuthorIn(Collection<SocialWallUser> authors, Pageable pageable);
 }

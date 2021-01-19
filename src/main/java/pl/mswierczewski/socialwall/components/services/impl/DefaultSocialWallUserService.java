@@ -1,15 +1,20 @@
 package pl.mswierczewski.socialwall.components.services.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
+import pl.mswierczewski.socialwall.components.models.SocialWallUserProfile;
 import pl.mswierczewski.socialwall.components.repositories.SocialWallUserProfileRepository;
 import pl.mswierczewski.socialwall.components.repositories.SocialWallUserRepository;
 import pl.mswierczewski.socialwall.components.services.SocialWallUserService;
 import pl.mswierczewski.socialwall.dtos.FileDto;
+import pl.mswierczewski.socialwall.dtos.user.EditUserProfileRequest;
 import pl.mswierczewski.socialwall.dtos.user.UserBasicInfo;
 import pl.mswierczewski.socialwall.dtos.user.UserInfo;
 import pl.mswierczewski.socialwall.exceptions.FileDownloadException;
@@ -21,6 +26,7 @@ import pl.mswierczewski.socialwall.utils.storage.FileBuckets;
 import pl.mswierczewski.socialwall.utils.storage.FileStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.apache.http.entity.ContentType.*;
 
@@ -215,11 +221,79 @@ public class DefaultSocialWallUserService implements SocialWallUserService {
      * @param followingUserId - String of user id that will be following
      */
     @Override
-    public void followUser(String userId, String followingUserId) {
+    public Boolean followUser(String userId, String followingUserId) {
         SocialWallUser user = getUserById(userId);
         SocialWallUser followingUser = getUserById(followingUserId);
 
         user.addFollowing(followingUser);
         save(user);
+
+        return true;
     }
+
+    @Override
+    public Boolean unfollowUser(String userId, String unfollowingUserId) {
+        SocialWallUser user = getUserById(userId);
+        SocialWallUser unfollowingUser = getUserById(unfollowingUserId);
+
+        user.removeFollowing(unfollowingUser);
+        save(user);
+
+        return true;
+    }
+
+    @Override
+    public List<UserBasicInfo> getUserFollowers(String principalId, String userId) {
+        SocialWallUser socialWallUser = getUserById(userId);
+        return socialWallUser.getFollowers().stream()
+                .map(user -> userMapper.mapUserToBasicUserInfo(principalId, user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserBasicInfo> getUserFollowing(String principalId, String userId) {
+        SocialWallUser socialWallUser = getUserById(userId);
+        return socialWallUser.getFollowing().stream()
+                .map(user -> userMapper.mapUserToBasicUserInfo(principalId, user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserBasicInfo> findUsersByName(String name, int page, int pageSize) {
+        Pageable pageRequest = PageRequest.of(page - 1, pageSize);
+
+        Page<SocialWallUser> users = userRepository.findByUsernameContaining(name, pageRequest);
+
+        return users.stream()
+                .map(userMapper::mapUserToBasicUserInfo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public UserInfo editUserProfile(String userId, EditUserProfileRequest editUserProfileRequest) {
+        SocialWallUser user = getUserById(userId);
+
+        user.setUsername(editUserProfileRequest.getUsername());
+        SocialWallUserProfile userProfile = user.getUserProfile();
+        userProfile.setFirstName(editUserProfileRequest.getFirstName());
+        userProfile.setLastName(editUserProfileRequest.getLastName());
+        userProfile.setBirthDate(editUserProfileRequest.getBirthDate());
+        editUserProfileRequest.getCity().ifPresent(userProfile::setCity);
+        editUserProfileRequest.getCountry().ifPresent(userProfile::setCountry);
+        editUserProfileRequest.getDescription().ifPresent(userProfile::setDescription);
+
+        user = userRepository.save(user);
+
+        return userMapper.mapUserToUserInfo(user);
+    }
+
+    @Override
+    public Boolean isFollowing(String userId1, String userId2) {
+        SocialWallUser user1 = getUserById(userId1);
+
+        return user1.getFollowing().stream()
+                .anyMatch(user -> user.getId().equals(userId2));
+    }
+
+
 }

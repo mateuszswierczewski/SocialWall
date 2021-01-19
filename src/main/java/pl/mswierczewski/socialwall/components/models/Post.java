@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Entity
@@ -56,6 +57,7 @@ public class Post implements Serializable, Votable {
     )
     @LazyCollection(LazyCollectionOption.EXTRA)
     @Cascade(CascadeType.DELETE)
+    @OrderColumn
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany
@@ -148,5 +150,27 @@ public class Post implements Serializable, Votable {
     @Override
     public void addVote(Vote vote) {
         votes.add(vote);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Post)) return false;
+        Post post = (Post) o;
+        return getId().equals(post.getId()) &&
+                getAuthor().equals(post.getAuthor()) &&
+                getPostType() == post.getPostType() &&
+                Objects.equals(getTextContent(), post.getTextContent()) &&
+                Objects.equals(getImagesLinks(), post.getImagesLinks()) &&
+                getCreatedDateTime().equals(post.getCreatedDateTime());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getAuthor(), getPostType(), getTextContent(), getImagesLinks(), getCreatedDateTime());
     }
 }

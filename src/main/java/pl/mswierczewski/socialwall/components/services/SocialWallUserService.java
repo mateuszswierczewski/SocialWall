@@ -4,10 +4,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 import pl.mswierczewski.socialwall.components.models.SocialWallUser;
 import pl.mswierczewski.socialwall.dtos.FileDto;
+import pl.mswierczewski.socialwall.dtos.user.EditUserProfileRequest;
 import pl.mswierczewski.socialwall.dtos.user.UserBasicInfo;
 import pl.mswierczewski.socialwall.dtos.user.UserInfo;
 
 import java.security.Principal;
+import java.util.List;
 
 public interface SocialWallUserService extends UserDetailsService {
 
@@ -29,5 +31,17 @@ public interface SocialWallUserService extends UserDetailsService {
 
     UserBasicInfo getUserBasicInfo(String userId);
 
-    void followUser(String userId, String followingUserId);
+    Boolean followUser(String userId, String followingUserId);
+
+    Boolean unfollowUser(String principalId, String unfollowingUserId);
+
+    List<UserBasicInfo> getUserFollowers(String principalId, String userId);
+
+    Boolean isFollowing(String userId1, String userId2);
+
+    List<UserBasicInfo> getUserFollowing(String principalId, String userId);
+
+    List<UserBasicInfo> findUsersByName(String name, int page, int pageSize);
+
+    UserInfo editUserProfile(String userId, EditUserProfileRequest editUserProfileRequest);
 }

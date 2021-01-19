@@ -19,4 +19,6 @@ public interface PostService {
     void deletePostById(String owner, String postId);
 
     List<PostResponse> getUserPosts(String userId, int page, int pageSize);
+
+    List<PostResponse> getPostRecommendedForUser(String name, int page, int pageSize);
 }

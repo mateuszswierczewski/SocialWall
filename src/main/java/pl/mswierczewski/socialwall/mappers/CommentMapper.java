@@ -14,10 +14,12 @@ import java.util.List;
 public interface CommentMapper {
 
     @Mapping(target = "userId", source = "author.id")
+    @Mapping(target = "firstName", source = "author.userProfile.firstName")
+    @Mapping(target = "lastName", source = "author.userProfile.lastName")
+    @Mapping(target = "username", source = "author.username")
     @Mapping(target = "numberOfLikes", source = "votes", qualifiedByName = "likes")
     @Mapping(target = "numberOfDislikes", source = "votes", qualifiedByName = "dislikes")
     CommentResponse mapCommentToCommentResponse(Comment comment);
-
 
     @Named("dislikes")
     default int getNumberOfDislikes(List<Vote> votes) {

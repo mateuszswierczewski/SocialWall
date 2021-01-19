@@ -8,4 +8,5 @@ import pl.mswierczewski.socialwall.components.models.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, String> {
 
+
 }

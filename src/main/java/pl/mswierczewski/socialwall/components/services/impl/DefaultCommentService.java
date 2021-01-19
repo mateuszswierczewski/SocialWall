@@ -18,6 +18,8 @@ import pl.mswierczewski.socialwall.exceptions.api.EntityNotFoundException;
 import pl.mswierczewski.socialwall.exceptions.api.RequestForbiddenException;
 import pl.mswierczewski.socialwall.mappers.CommentMapper;
 
+import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,8 +49,11 @@ public class DefaultCommentService implements CommentService {
         Comment comment = new Comment();
         comment.setAuthor(user);
         comment.setTextContent(request.getTextContent());
+        comment.setCreatedDateTime(ZonedDateTime.now());
 
         comment = commentRepository.save(comment);
+
+        post.addComment(comment);
         postService.save(post);
 
         return commentMapper.mapCommentToCommentResponse(comment);
@@ -84,6 +89,7 @@ public class DefaultCommentService implements CommentService {
         List<Comment> comments = post.getComments();
 
         return comments.stream()
+                .sorted(Comparator.comparing(com -> com.getCreatedDateTime().toInstant()))
                 .map(commentMapper::mapCommentToCommentResponse)
                 .collect(Collectors.toList());
     }

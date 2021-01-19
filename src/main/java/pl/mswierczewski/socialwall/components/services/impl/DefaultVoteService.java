@@ -66,7 +66,7 @@ public class DefaultVoteService implements VoteService {
         SocialWallUser user = userService.getUserById(userId);
 
         Optional<Vote> voteOptional = votable.getVotes().stream()
-                .filter(vote -> vote.getVoter().equals(user))
+                .filter(vote -> vote.getVoter().getId().equals(userId))
                 .findAny();
 
         if (voteOptional.isPresent()) {
@@ -79,7 +79,6 @@ public class DefaultVoteService implements VoteService {
                 voteRepository.save(vote);
                 return voteMapper.mapVoteToVoteResponse(vote);
             }
-
         } else {
             Vote vote = new Vote();
             vote.setVoter(user);

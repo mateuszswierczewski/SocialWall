@@ -189,8 +189,12 @@ public class SocialWallUser implements UserDetails, Serializable {
         return following;
     }
 
-    public void addFollowing(SocialWallUser following) {
-        this.following.add(following);
+    public void addFollowing(SocialWallUser user) {
+        this.following.add(user);
+    }
+
+    public void removeFollowing(SocialWallUser user) {
+        this.following.remove(user);
     }
 
     public Set<SocialWallUser> getFollowers() {

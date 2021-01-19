@@ -110,6 +110,20 @@ public class DefaultPostService implements PostService {
 
     @Override
     @Transactional
+    public List<PostResponse> getPostRecommendedForUser(String userId, int page, int pageSize) {
+        SocialWallUser user = userService.getUserById(userId);
+        Pageable pageRequest = PageRequest.of(page - 1, pageSize, Sort.by("createdDateTime").descending());
+
+        Set<SocialWallUser> following = user.getFollowing();
+        Page<Post> posts = postRepository.findAllByAuthorIn(following, pageRequest);
+
+        return posts.stream()
+                .map(postMapper::mapPostToPostResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public PostResponse addNewPost(String userId, PostRequest request) {
         if (request.getTextContent().isEmpty() && request.getImages().isEmpty()){
             throw new BadRequestException("Post must contain any text or at least one image!");
